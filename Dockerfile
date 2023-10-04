@@ -1,11 +1,13 @@
 FROM node:18
 WORKDIR /usr/src/app
 
-COPY package*.json ./
-RUN npm ci
+COPY yarn.lock ./
+COPY package.json ./
+RUN yarn install --production
 
-COPY . .
-
-EXPOSE $SERVER_PORT
+COPY . ./
+RUN mkdir ./data
 
 CMD ["node", "app.mjs"]
+
+EXPOSE 8080

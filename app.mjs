@@ -89,8 +89,8 @@ app.post('/', async (req, res) => {
         res.status(500).end()
     }
 })
-app.listen(parseInt(process.env.SERVER_PORT), () => {
-    console.log(`Started app at http://localhost:${process.env.SERVER_PORT}`)
+app.listen(8080, () => {
+    console.log(`Started app at http://localhost:8080`)
 })
 
 process.on('exit', async () => {
