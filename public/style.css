@@ -1,0 +1,33 @@
+* {
+    font-family: sans-serif
+}
+
+:root {
+    --color-primary: rgb(16, 42, 67);
+    --color-pageBackground: #E8ECF0;
+    --color-pageBackgroundTopLeft: #E8ECF0;
+    --color-pageBackgroundBottomRight: #B3D9FF;
+    --color-pageBackgroundLineBottom: #B3D9FF;
+    --color-pageBackgroundLineMid: #E8ECF0;
+    --color-pageBackgroundLineTop: #ffffff;
+}
+
+#import #file-input-label {
+    box-shadow: rgba(0, 0, 0, 0.2) 0 2px 4px 0;
+    border: none;
+}
+
+#import #file-input-label:hover {
+    background-color: var(--bs-light);
+    box-shadow: rgba(0, 0, 0, 0.1) 2px 8px 6px 0;
+}
+
+#import .btn[type='submit'] {
+    border-color: var(--color-primary) !important;
+    color: var(--color-primary) !important;
+}
+
+#import .btn[type='submit']:hover {
+    font-weight: bold;
+    color: var(--color-primary) !important;
+}
