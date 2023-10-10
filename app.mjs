@@ -49,19 +49,13 @@ function parseFile(input) {
 async function importTransactions(accountName, transactions) {
     const accounts = await api.getAccounts()
     const account = accounts.find(acc => acc.name === accountName)
+    if (account == null) return {errors: "invalid account"}
     return await api.importTransactions(account.id, transactions)
 }
 
-await api.init({
-    dataDir: 'data',
-    serverURL: process.env.API_ENDPOINT,
-    password: process.env.API_USER_PASS,
+process.on('exit', async () => {
+    await api.shutdown()
 })
-
-await api.downloadBudget(
-    process.env.API_SYNC_ID,
-    { password: process.env.API_ENCR_PASS }
-)
 
 const app = express()
 app.set('views', './views');
@@ -76,23 +70,32 @@ app.post('/', async (req, res) => {
     req.files.files = !req.files.files.length
         ? [req.files.files]
         : req.files.files
+
     let transactions = []
     for(const file of req.files.files) {
         transactions = transactions.concat(parseFile(file.data.toString()))
     }
-    console.log(transactions)
+
     try {
-        await importTransactions("Personal Checking", transactions)
-        res.status(200).end()
+        const results = await importTransactions(req.body.account, transactions)
+        console.log(results)
+        if (results.errors != null) res.status(500)
+        else res.status(200)
     } catch (e) {
-        console.log(e)
-        res.status(500).end()
+        res.status(500).end(e.message)
     }
 })
 app.listen(8080, () => {
     console.log(`Started app at http://localhost:8080`)
 })
 
-process.on('exit', async () => {
-    await api.shutdown()
+await api.init({
+    dataDir: 'data',
+    serverURL: process.env.API_ENDPOINT,
+    password: process.env.API_USER_PASS,
 })
+
+await api.downloadBudget(
+    process.env.API_SYNC_ID,
+    { password: process.env.API_ENCR_PASS }
+)

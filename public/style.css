@@ -12,12 +12,12 @@
     --color-pageBackgroundLineTop: #ffffff;
 }
 
-#import #file-input-label {
+.box-shadow {
     box-shadow: rgba(0, 0, 0, 0.2) 0 2px 4px 0;
     border: none;
 }
 
-#import #file-input-label:hover {
+.btn.box-shadow:hover {
     background-color: var(--bs-light);
     box-shadow: rgba(0, 0, 0, 0.1) 2px 8px 6px 0;
 }

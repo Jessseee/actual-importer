@@ -17,22 +17,30 @@ html
 
     body
         include background.html
-        div(class="container pt-5")
-            div(class="row")
-                form(method='post' enctype='multipart/form-data' id="import" class="mx-auto col-lg-6")
+        div(class="container position-relative")
+            div(class="row h-100")
+                form(method='post' enctype='multipart/form-data' id="import" class="mx-auto col-lg-6 my-auto")
+                    h1(class="text-dark mb-4 ms-2") Import
                     input(type='file' accept=".csv" name='files' id='file-input' class="d-none" multiple)
-                    label(for='file-input' id="file-input-label" class='card btn d-block py-5 ')
+                    div(class="input-group my-3 rounded box-shadow")
+                        label(class="input-group-text" for="account-input") Account name:
+                        input(type='text' id="account-input" class="form-control" name="account" placeholder="Personal Checking" value="Personal Checking")
+                    label(for='file-input' class='card btn d-block py-5 mb-3 box-shadow')
                         i(class="fa-regular fa-file")
                         span(class="ms-1") Select Files
                     button(type="submit" class="btn border-1 w-100 mt-2 position-relative" disabled)
                         i(class="fa-solid fa-download")
                         span(class="ms-1") Import
                     ul(id="file-names" class="list-group mt-1")
+                    p(class="text-center mt-5") Using server:
+                        span(class="fw-bold") #{process.env.API_ENDPOINT}
     script.
         const fileList = document.querySelector('#import #file-names')
         const submitBtn = document.querySelector('#import button[type=submit]')
         const fileInput = document.querySelector('#import #file-input')
-        document.querySelector('#import').onchange = e => {
+        const accountInput = document.querySelector('#import #account-input')
+
+        document.querySelector('#import #file-input').onchange = e => {
             const uploaded = e.target.files
             fileList.innerHTML = ''
             for (const file of uploaded) {
@@ -44,27 +52,31 @@ html
             submitBtn.disabled = false
         }
 
+        function markFiles(success) {
+            for (const item of fileList.childNodes) {
+                if (success) item.innerHTML += " <i class='fa-solid fa-check text-success float-end my-1'></i>"
+                else item.innerHTML += " <i class='fa-solid fa-xmark text-danger float-end my-1'></i>"
+            }
+            fileInput.value = ''
+            submitBtn.disabled = true
+        }
+
         document.querySelector('#import').onsubmit = async e => {
             e.preventDefault()
             let formData = new FormData();
             formData.append("files", fileInput.files[0]);
+            formData.append("account", accountInput.value)
             try {
                 fetch('/', {
                     method: "POST",
                     body: formData
                 }).then( res => {
                     console.log(res)
-                    fileInput.value = ''
-                    for (const item of fileList.childNodes) {
-                        item.innerHTML += " <i class='fa-solid fa-check text-success float-end my-1'></i>"
-                    }
-                    submitBtn.disabled = true
+                    markFiles(res.ok)
                 })
             } catch (e) {
                 console.log(e)
-                for (const item of fileList.childNodes) {
-                    item.innerHTML += " <i class='fa-solid fa-xmark text-danger float-end my-1'></i>"
-                }
+                markFiles(false)
             }
         }
 
