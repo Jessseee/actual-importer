@@ -81,6 +81,7 @@ app.post('/', async (req, res) => {
         console.log(results)
         if (results.errors != null) res.status(500)
         else res.status(200)
+        res.end()
     } catch (e) {
         res.status(500).end(e.message)
     }
